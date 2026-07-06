@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ShopEase{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <a href="{% url 'product_list' %}" class="brand">
+            <span class="brand-icon">S</span>
+            Shop<span>Ease</span>
+        </a>
+        <div class="nav-inner">
+            <a href="{% url 'product_list' %}">Home</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'view_cart' %}">
+                    Cart{% with total=user.cart_items.count %}{% if total > 0 %}<span class="cart-badge">{{ total }}</span>{% endif %}{% endwith %}
+                </a>
+                <a href="{% url 'order_history' %}">Orders</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="messages" id="messages">
+        {% for message in messages %}
+        <div class="msg {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+        <span class="footer-brand">Shop<span>Ease</span></span>
+        &copy; {% now "Y" %} ShopEase &mdash; Built with Django
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

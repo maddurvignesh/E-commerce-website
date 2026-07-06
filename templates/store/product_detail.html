@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} — ShopEase{% endblock %}
+{% block content %}
+<div class="section-header">
+    <div>
+        <a href="{% url 'product_list' %}" class="btn btn-outline btn-sm">&larr; Back to Products</a>
+    </div>
+</div>
+
+<div class="product-detail">
+    <div class="detail-img">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+        <img src="https://via.placeholder.com/600x500?text=No+Image" alt="{{ product.name }}">
+        {% endif %}
+    </div>
+    <div class="detail-info">
+        <h1>{{ product.name }}</h1>
+        <div class="price">${{ product.price }}</div>
+        <div class="desc">{{ product.description|linebreaks }}</div>
+        <div class="stock-badge {% if product.stock > 0 %}available{% else %}unavailable{% endif %}">
+            {% if product.stock > 0 %}
+                <span>&#10003;</span> In Stock ({{ product.stock }} available)
+            {% else %}
+                <span>&#10007;</span> Out of Stock
+            {% endif %}
+        </div>
+        {% if user.is_authenticated and product.stock > 0 %}
+        <div class="qty-group">
+            <form action="{% url 'add_to_cart' product.pk %}" method="post" style="display:flex;align-items:center;gap:12px;">
+                {% csrf_token %}
+                <div class="stepper">
+                    <button type="button" onclick="this.nextElementSibling.stepDown()">−</button>
+                    <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" id="qty">
+                    <button type="button" onclick="this.previousElementSibling.stepUp()">+</button>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg">Add to Cart</button>
+            </form>
+        </div>
+        {% elif not user.is_authenticated %}
+        <div class="qty-group">
+            <a href="{% url 'login' %}?next={% url 'product_detail' product.pk %}" class="btn btn-primary btn-lg">Login to Purchase</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

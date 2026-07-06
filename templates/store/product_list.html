@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}ShopEase — Premium Tech{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <h1>Premium Tech, <span class="highlight">Delivered</span></h1>
+    <p>Discover cutting-edge gadgets and accessories curated for those who demand the best.</p>
+    <div class="hero-badges">
+        <span class="hero-badge">&#9889; Free Shipping</span>
+        <span class="hero-badge">&#10003; 2-Year Warranty</span>
+        <span class="hero-badge">&#128274; Secure Checkout</span>
+        <span class="hero-badge">&#128230; 30-Day Returns</span>
+    </div>
+</section>
+
+<div class="section-header">
+    <div>
+        <h1>Featured Products</h1>
+        <p class="section-subtitle">{{ products|length }} premium items available</p>
+    </div>
+</div>
+
+<div class="product-grid" id="productGrid">
+    {% for product in products %}
+    <div class="product-card" data-delay="{{ forloop.counter0 }}">
+        <a href="{% url 'product_detail' product.pk %}" class="img-wrap">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+            {% else %}
+            <img src="https://via.placeholder.com/400?text=No+Image" alt="{{ product.name }}">
+            {% endif %}
+            {% if forloop.first %}<span class="badge badge-new">New</span>{% endif %}
+            {% if forloop.counter == 2 %}<span class="badge badge-popular">Best Seller</span>{% endif %}
+            {% if forloop.last %}<span class="badge badge-sale">Sale</span>{% endif %}
+        </a>
+        <div class="info">
+            <h3>{{ product.name }}</h3>
+            <div class="price-row">
+                <span class="price">${{ product.price }}</span>
+            </div>
+            <div class="stock {% if product.stock > 0 %}in-stock{% else %}out-of-stock{% endif %}">
+                {% if product.stock > 0 %}&#9679; In Stock{% else %}&#9679; Out of Stock{% endif %}
+            </div>
+            {% if user.is_authenticated and product.stock > 0 %}
+            <form action="{% url 'add_to_cart' product.pk %}" method="post" style="display:contents;">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn-add">Add to Cart &rarr;</button>
+            </form>
+            {% else %}
+            <a href="{% url 'product_detail' product.pk %}" class="btn-add" style="display:block;text-align:center;text-decoration:none;">
+                {% if not user.is_authenticated %}Login to Buy{% else %}View Details{% endif %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state" style="grid-column:1/-1;">
+        <div class="empty-icon">&#128722;</div>
+        <h2>No products yet</h2>
+        <p>Check back soon for new arrivals.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
