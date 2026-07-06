@@ -73,10 +73,11 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+import os as _os
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': _os.environ.get('VERCEL') and _os.path.join('/tmp', 'db.sqlite3') or BASE_DIR / 'db.sqlite3',
     }
 }
 
