@@ -44,6 +44,12 @@ class Command(BaseCommand):
                 'price': Decimal('89.99'),
                 'stock': 20,
             },
+            {
+                'name': 'Classic Hoodie',
+                'description': 'Comfortable cotton-blend hoodie with a modern fit. Features a kangaroo pocket, adjustable drawstring hood, and ribbed cuffs. Perfect for casual wear.',
+                'price': Decimal('59.99'),
+                'stock': 30,
+            },
         ]
 
         for data in products:

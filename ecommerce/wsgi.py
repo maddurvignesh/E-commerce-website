@@ -11,14 +11,23 @@ if os.environ.get('VERCEL'):
     tables = connection.introspection.table_names()
     if not tables:
         call_command('migrate', verbosity=0, interactive=False)
-        from store.management.commands.seed_data import Command as SeedCmd
-        SeedCmd().handle()
+        call_command('seed_data', verbosity=0)
         from store.models import Product
-        if Product.objects.exists():
-            from store.management.commands.add_images import Command as ImgCmd
+        from django.core.files import File as DjangoFile
+        import glob
+        for path in sorted(glob.glob('/var/task/media/products/product_*.jpg')):
+            fname = os.path.basename(path)
+            parts = fname.split('_')
             try:
-                ImgCmd().handle()
-            except Exception:
-                pass
+                pid = int(parts[1])
+            except (IndexError, ValueError):
+                continue
+            try:
+                prod = Product.objects.get(pk=pid)
+            except Product.DoesNotExist:
+                continue
+            if not prod.image:
+                with open(path, 'rb') as f:
+                    prod.image.save(fname, DjangoFile(f), save=True)
 
 application = get_wsgi_application()
