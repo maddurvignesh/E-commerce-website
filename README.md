@@ -84,10 +84,6 @@ E-commerce-website/
 └── manage.py
 ```
 
-## Screenshots
-
-*(Add screenshots of your deployed site here)*
-
 ## Developer
 
 **Maddur Vignesh**  
