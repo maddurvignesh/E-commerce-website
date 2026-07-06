@@ -88,6 +88,11 @@ E-commerce-website/
 
 *(Add screenshots of your deployed site here)*
 
+## Developer
+
+**Maddur Vignesh**  
+[github.com/maddurvignesh](https://github.com/maddurvignesh)
+
 ## License
 
 MIT
