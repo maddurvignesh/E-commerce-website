@@ -1,4 +1,11 @@
+import glob
+import os
+from pathlib import Path
+
+from django.conf import settings
+from django.core.files import File as DjangoFile
 from django.core.management.base import BaseCommand
+
 from store.models import Product
 from decimal import Decimal
 
@@ -7,7 +14,7 @@ class Command(BaseCommand):
     help = 'Seed the database with sample products'
 
     def handle(self, *args, **kwargs):
-        products = [
+        products_data = [
             {
                 'name': 'Wireless Headphones',
                 'description': 'High-quality wireless headphones with noise cancellation, 30-hour battery life, and premium sound quality. Perfect for music lovers and professionals.',
@@ -52,10 +59,22 @@ class Command(BaseCommand):
             },
         ]
 
-        for data in products:
-            Product.objects.get_or_create(
+        for idx, data in enumerate(products_data, start=1):
+            product, created = Product.objects.get_or_create(
                 name=data['name'],
                 defaults=data,
             )
+            if created or not product.image:
+                self._assign_image(product, idx)
 
-        self.stdout.write(self.style.SUCCESS(f'Seeded {len(products)} products'))
+        count = Product.objects.count()
+        self.stdout.write(self.style.SUCCESS(f'Seeded {count} products'))
+
+    def _assign_image(self, product, idx):
+        media_root = settings.MEDIA_ROOT
+        for path in sorted(glob.glob(os.path.join(media_root, 'products', f'product_{idx}_*'))):
+            fname = os.path.basename(path)
+            with open(path, 'rb') as f:
+                product.image.save(fname, DjangoFile(f), save=True)
+            self.stdout.write(f'  Assigned image {fname} to {product.name}')
+            return
