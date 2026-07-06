@@ -2,6 +2,8 @@
 
 A modern e-commerce web application built with **Django** featuring a responsive UI, shopping cart, order processing, and user authentication.
 
+🔗 **Live Demo:** [e-commerce-website-1-51gk.onrender.com](https://e-commerce-website-1-51gk.onrender.com/)
+
 ## Features
 
 - **Product Catalog** — Browse products with images, descriptions, and pricing
